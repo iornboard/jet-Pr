@@ -8,7 +8,7 @@
         </b-col>
         <b-col cols="8">
             <div id="dropBar">
-                <b-form-file id="file-default"></b-form-file>
+                <input type='file' accept="text/xml" @change="sampleFileSubmit"/>
             </div>
         </b-col>
         <b-col>
@@ -23,10 +23,18 @@ export default {
   name: 'intro',
   data () {
     return {
-      msg: 'Input your xml file'
+      msg: 'Input your xml file',
+      sampleFile: null
     }
   },
   methods: {
+    async sampleFileSubmit (e) {
+      console.log('출력')
+
+      var reader = new FileReader()
+      reader.readAsText(e.target.files[0])
+      console.log(reader.result)
+    }
   }
 }
 </script>
