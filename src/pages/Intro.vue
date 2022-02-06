@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import convert from 'xml-js'
+
 export default {
   name: 'intro',
   data () {
@@ -28,12 +30,15 @@ export default {
     }
   },
   methods: {
-    async sampleFileSubmit (e) {
-      console.log('출력')
+    sampleFileSubmit (e) {
+      console.log(e.target.files[0])
 
-      var reader = new FileReader()
-      reader.readAsText(e.target.files[0])
-      console.log(reader.result)
+      const render = new FileReader()
+      render.readAsText(e.target.files[0])
+      render.onload = () => {
+        console.log(render.result)
+        console.log(convert.xml2js(render.result, {compact: true}))
+      }
     }
   }
 }
