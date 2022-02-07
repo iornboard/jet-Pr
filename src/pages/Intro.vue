@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import convert from 'xml-js'
+import prepro from '@/module/prepro/prepro'
 
 export default {
   name: 'intro',
@@ -31,13 +31,11 @@ export default {
   },
   methods: {
     sampleFileSubmit (e) {
-      console.log(e.target.files[0])
-
       const render = new FileReader()
       render.readAsText(e.target.files[0])
       render.onload = () => {
-        console.log(render.result)
-        console.log(convert.xml2js(render.result, {compact: true}))
+        prepro.readToXmlFile(render.result)
+        console.log(prepro.prepro)
       }
     }
   }
