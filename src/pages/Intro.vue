@@ -36,6 +36,7 @@ export default {
       render.onload = () => {
         prepro.readToXmlFile(render.result)
         console.log(prepro.prepro)
+        console.log(prepro.exportToString())
       }
     }
   }
