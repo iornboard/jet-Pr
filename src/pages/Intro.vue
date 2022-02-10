@@ -37,6 +37,7 @@ export default {
         prepro.readToXmlFile(render.result)
         console.log(prepro.prepro)
         console.log(prepro.exportToString())
+        console.log('this is some of test& set test module')
       }
     }
   }
