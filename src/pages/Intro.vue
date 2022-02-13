@@ -15,6 +15,7 @@
         </b-col>
     </b-row>
     </b-container>
+    <b-button @click="sampleDownload">Button</b-button>
   </div>
 </template>
 
@@ -39,6 +40,9 @@ export default {
         console.log(prepro.exportToString())
         console.log('this is some of test& set test module')
       }
+    },
+    sampleDownload () {
+      prepro.exportToXmlFile('black Test Sample')
     }
   }
 }
