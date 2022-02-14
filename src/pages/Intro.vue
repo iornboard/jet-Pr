@@ -37,12 +37,11 @@ export default {
       render.onload = () => {
         prepro.readToXmlFile(render.result)
         console.log(prepro.prepro)
-        console.log(prepro.exportToString())
         console.log('this is some of test& set test module')
       }
     },
     sampleDownload () {
-      prepro.exportToXmlFile('black Test Sample')
+      prepro.exportToXmlFile('black Test Sample.xml')
     }
   }
 }

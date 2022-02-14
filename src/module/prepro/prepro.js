@@ -20,8 +20,6 @@ function exportToXmlFile (fileName = 'defult.xml') {
   a.dataset.downloadurl = ['.xml', a.download, a.href].join(':')
   a.style.display = 'none'
 
-  console.log(a)
-
   a.click()
   setTimeout(function () { URL.revokeObjectURL(a.href) }, 1500)
 }
