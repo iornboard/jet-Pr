@@ -15,6 +15,9 @@ describe('prepro.js', () => {
 
     prepro.readToXmlFile(text)
 
+    // console.log(prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem.map(it => { it.filter.effect.name._text = 'A'; return it })) // 텍스트 일괄변경 테스트
+    console.log(prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem.map(it => it.filter.effect.parameter[0].value ? JSON.parse(Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le').match(/\{[^)]*\}/)) : null))
+
     fs.writeFileSync(resultFileDir + '/result_' + time.toISOString().substring(0, 10) + '-' + time.toTimeString().substring(0, 8).replace(/:/gi, '') + '.xml', prepro.toString(), 'utf8', function (err) {
       if (err) {
         console.log(err)
