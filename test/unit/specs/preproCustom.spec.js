@@ -15,22 +15,31 @@ describe('prepro.js', () => {
 
     prepro.readToXmlFile(text)
 
-    // 텍스트 디코딩
-    // console.log(prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem.map(it => { it.filter.effect.name._text = 'A'; return it })) // 텍스트 일괄변경 테스트
-    var str = prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem
-      .map(it => it.filter.effect.parameter[0].value ? Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le') : null)
-      .map(it => it ? {head: it.split(/\{[^)]*\}/)[0], body: JSON.parse(it.match(/\{[^)]*\}/)[0])} : it)
+    // to-do.1 clipitem을 기준으로 값을 가져갈 수 있도록 할 것(디코딩 시)
 
-    // console.log(str)
+    // 텍스트 디코딩
+    var clipitems = prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem
+      .map(it => {
+        if (it.filter.effect.parameter[0].value) {
+          const textValue = Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le')
+          it.filter.effect.parameter[0].value = {head: textValue.split(/\{[^)]*\}/)[0], body: JSON.parse(textValue.match(/\{[^)]*\}/)[0])}
+        }
+        return it
+      })
 
     // 텍스트 일괄변경
-    str = str.map(it => { if (it) it.body.mTextParam.mStyleSheet.mText = '안녕하세요 ㅋㅋ'; return it })
-    // console.log(str.map(it => it ? it.body.mTextParam.mStyleSheet.mText : it)) // Q. map에서 내용이 유지되는가?
+    clipitems = clipitems.map(it => { if (it.filter.effect.parameter[0].value) it.filter.effect.parameter[0].value.body.mTextParam.mStyleSheet.mText = '인코딩, 디코딩 테스트'; return it })
 
-    // 재 인코딩
-    str = str.map(it => it ? Buffer.from(it.head + JSON.stringify(it.body), 'utf16le').toString('base64') : it)
-    prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem = prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem
-      .map((it, idx) => { if (it.filter.effect.parameter[0].value) it.filter.effect.parameter[0].value = str[idx]; return it })
+    // 재인코딩
+    clipitems.map(it => {
+      if (it.filter.effect.parameter[0].value) {
+        const textValue = it.filter.effect.parameter[0].value
+        it.filter.effect.parameter[0].value = Buffer.from(textValue.head + JSON.stringify(textValue.body), 'utf16le').toString('base64')
+      }
+      return it
+    })
+
+    prepro.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem = clipitems
 
     fs.writeFileSync(resultFileDir + '/result_' + time.toISOString().substring(0, 10) + '-' + time.toTimeString().substring(0, 8).replace(/:/gi, '') + '.xml', prepro.toString(), 'utf8', function (err) {
       if (err) {
