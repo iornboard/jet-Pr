@@ -24,15 +24,24 @@ function exportToXmlFile (fileName = 'defult.xml') {
   setTimeout(function () { URL.revokeObjectURL(a.href) }, 1500)
 }
 
-function decodeClipItems () {
-  return this.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem
-    .map(it => {
-      if (it.filter.effect.parameter[0].value) {
-        const textValue = Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le')
-        it.filter.effect.parameter[0].value = {head: textValue.split(/\{[^)]*\}/)[0], body: JSON.parse(textValue.match(/\{[^)]*\}/)[0])}
-      }
-      return it
-    })
+function decodeClipItems (clipitems) {
+  return clipitems.map(it => {
+    if (it.filter.effect.parameter[0].value) {
+      const textValue = Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le')
+      it.filter.effect.parameter[0].value = {head: textValue.split(/\{[^)]*\}/)[0], body: JSON.parse(textValue.match(/\{[^)]*\}/)[0])}
+    }
+    return it
+  })
+}
+
+function encodeClipItems (clipitems) {
+  return clipitems.map(it => {
+    if (it.filter.effect.parameter[0].value) {
+      const textValue = it.filter.effect.parameter[0].value
+      it.filter.effect.parameter[0].value = Buffer.from(textValue.head + JSON.stringify(textValue.body), 'utf16le').toString('base64')
+    }
+    return it
+  })
 }
 
 export default {
@@ -40,5 +49,6 @@ export default {
   readToXmlFile: readToXmlFile,
   toString: toString,
   exportToXmlFile: exportToXmlFile,
-  decodeClipItems: decodeClipItems
+  decodeClipItems: decodeClipItems,
+  encodeClipItems: encodeClipItems
 }
