@@ -24,9 +24,21 @@ function exportToXmlFile (fileName = 'defult.xml') {
   setTimeout(function () { URL.revokeObjectURL(a.href) }, 1500)
 }
 
+function decodeClipItems () {
+  return this.prepro.xmeml.project.children.sequence.media.video.track[1].clipitem
+    .map(it => {
+      if (it.filter.effect.parameter[0].value) {
+        const textValue = Buffer.from(it.filter.effect.parameter[0].value._text, 'base64').toString('utf16le')
+        it.filter.effect.parameter[0].value = {head: textValue.split(/\{[^)]*\}/)[0], body: JSON.parse(textValue.match(/\{[^)]*\}/)[0])}
+      }
+      return it
+    })
+}
+
 export default {
   prepro: prepro,
   readToXmlFile: readToXmlFile,
   toString: toString,
-  exportToXmlFile: exportToXmlFile
+  exportToXmlFile: exportToXmlFile,
+  decodeClipItems: decodeClipItems
 }
